@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playlist</title>
+    <link rel="stylesheet" href="hp.css">
+</head>
+<body>
+    <div class="header">
+        <h2><a href="index.html">Home</a></h2>
+        <h1>English Playlist</h1>
+        <div class="table1">
+            <table>
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Song Name</th>
+                        <th>Type</th>
+                        <th>Singer</th>
+                        <th>Song duration</th>
+                    </tr>
+                </thead>
+
+                <tr class="song-row">
+                    <td>1</td>
+                    <td>when i see you again</td>
+                    <td>Romance</td>
+                    <td>Wiz-Khalifa</td>
+                    <td>03:57</td>
+                    <td><img src="m2.png" class="icon" onclick="playPauseSong(0, this)"></td>
+                    <td><audio id="audio-0" src="when i see you again.mp3" onplay="showGif(0)" onpause="hideGif(0)"></audio></td>
+                    <td><span id="duration-0"></span></td>
+                </tr>
+
+                <tr class="song-row">
+                    <td>2</td>
+                    <td>Love-Me-Like-You-Do</td>
+                    <td>Romance</td>
+                    <td>Ellie Goulding</td>
+                    <td>04:09</td>
+                    <td><img src="m2.png" class="icon" onclick="playPauseSong(1, this)"></td>
+                    <td><audio id="audio-1" src="Love-Me-Like-You-Do.mp3" onplay="showGif(1)" onpause="hideGif(1)"></audio></td>
+                    <td><span id="duration-1"></span></td>
+                </tr>
+
+                <tr class="song-row">
+                    <td>3</td>
+                    <td>Let-Me-Love-You</td>
+                    <td>Love</td>
+                    <td>D J Snake</td>
+                    <td>03:25</td>
+                    <td><img src="m2.png" class="icon" onclick="playPauseSong(2, this)"></td>
+                    <td><audio id="audio-2" src="Let-Me-Love-You.mp3" onplay="showGif(2)" onpause="hideGif(2)"></audio></td>
+                    <td><span id="duration-2"></span></td>
+                </tr>
+
+                <tr class="song-row">
+                    <td>4</td>
+                    <td>Night-Changes</td>
+                    <td>Love</td>
+                    <td>One Direction</td>
+                    <td>04:00</td>
+                    <td><img src="m2.png" class="icon" onclick="playPauseSong(3, this)"></td>
+                    <td><audio id="audio-3" src="Night-Changes.mp3" onplay="showGif(3)" onpause="hideGif(3)"></audio></td>
+                    <td><span id="duration-3"></span></td>
+                </tr>
+
+                <tr class="song-row">
+                    <td>5</td>
+                    <td>Senorita</td>
+                    <td>Sad</td>
+                    <td>Shawn Mendes</td>
+                    <td>03:11</td>
+                    <td><img src="m2.png" class="icon" onclick="playPauseSong(4, this)"></td>
+                    <td><audio id="audio-4" src="senorita.mp3" onplay="showGif(4)" onpause="hideGif(4)"></audio></td>
+                    <td><span id="duration-4"></span></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="bottom">
+        <div class="low">
+            <div class="songinfo">
+                <img src="play3.gif" id="music-gif">
+            </div>
+            <span id="ctime">00:00</span>
+            <input type="range" id="progressbar" min="0" value="0" max="100" oninput="seekSong(this.value)">
+            <span id="totaltime">00:00</span>
+        </div>
+    </div>
+
+    <script>
+        var audioElements = document.querySelectorAll("audio");
+        var playPauseButtons = document.querySelectorAll(".icon");
+        var progressBar = document.getElementById("progressbar");
+        var currentTime = document.getElementById("ctime");
+        var totalTime = document.getElementById("totaltime");
+        var musicGif = document.getElementById("music-gif");
+    
+        var currentAudio = null;
+        var currentSongIndex = -1;
+        var progressInterval = null;
+    
+        // Function to play or pause a specific song
+        function playPauseSong(songIndex, button) {
+            var audio = audioElements[songIndex];
+    
+            if (currentAudio === audio) {
+                if (audio.paused) {
+                    audio.play();
+                    button.src = "pause2.png";
+                    currentAudio = audio;
+                    currentSongIndex = songIndex;
+                    startProgressInterval();
+                    showGif();
+                } else {
+                    audio.pause();
+                    button.src = "m2.png";
+                    stopProgressInterval();
+                    hideGif();
+                }
+            } else {
+                if (currentAudio) {
+                    resetAudio();
+                }
+    
+                audio.play();
+                button.src = "pause2.png";
+                currentAudio = audio;
+                currentSongIndex = songIndex;
+                startProgressInterval();
+                showGif();
+            }
+    
+            updateTotalTime(audio.duration);
+        }
+    
+        // Start the progress interval
+        function startProgressInterval() {
+            stopProgressInterval();
+            progressInterval = setInterval(updateProgressBar, 1000);
+        }
+    
+        // Stop the progress interval
+        function stopProgressInterval() {
+            clearInterval(progressInterval);
+        }
+    
+        // Update progress bar and current time
+        function updateProgressBar() {
+            var duration = currentAudio.duration;
+            var currentTime = currentAudio.currentTime;
+            var progress = (currentTime / duration) * 100;
+    
+            progressBar.value = progress;
+            updateCurrentTime(currentTime);
+    
+            if (currentTime >= duration) {
+                stopProgressInterval();
+                resetAudio();
+            }
+        }
+    
+        // Update current time display
+        function updateCurrentTime(time) {
+            currentTime.innerText = formatTime(time);
+        }
+    
+        // Update total time display
+        function updateTotalTime(time) {
+            totalTime.innerText = formatTime(time);
+        }
+    
+        // Seek song to the specified time
+        function seekSong(time) {
+            var duration = currentAudio.duration;
+            var seekTime = (time / 100) * duration;
+            currentAudio.currentTime = seekTime;
+            updateCurrentTime(seekTime);
+        }
+    
+        // Reset audio to the beginning
+        function resetAudio() {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+            var button = playPauseButtons[currentSongIndex];
+            button.src = "m2.png";
+            currentAudio = null;
+            currentSongIndex = -1;
+        }
+    
+        // Format time in minutes:seconds format
+        function formatTime(time) {
+            var minutes = Math.floor(time / 60);
+            var seconds = Math.floor(time % 60);
+            if (seconds < 10) {
+                seconds = "0" + seconds;
+            }
+            return minutes + ":" + seconds;
+        }
+    
+        // Show GIF image
+        function showGif() {
+            musicGif.style.display = "block";
+        }
+    
+        // Hide GIF image
+        function hideGif() {
+            if (currentAudio.paused) {
+                musicGif.style.display = "none";
+            }
+        }
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music page</title>
+  <link rel="stylesheet" href="music.css">
+  <script src="https://kit.fontawesome.com/9e026a49ff.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <div class="hero">
+    <div class="navbar">
+      <img src="logo.webp" class="logo">
+      <ul>
+        <li><a href="#hero">HOME</a></li>
+        <li><a href="#services">ALBUM</a></li>
+        <li><a href="#contact">CONTACT</a></li>
+      </ul>
+    </div>
+
+
+    <div class="content">
+      <div class="left">
+        <h1>Feel<br>The<br>Beats...</h1>
+      </div>
+      <div class="right">
+        <img src="m2.png" id="icon">
+        <img src="prev.png" id="icon2">
+        <img src="next.jpg" id="icon3">
+
+        <div class="volume">
+          <img id="track_image">
+          <!-- <p id="volume_show"></p> -->
+          <i class="fa-solid fa-volume-high" id="volume_icon" onclick="mute_sound()"></i>
+          <input type="range" min="0" max="100" onchange="volume_change()" id="volume">
+          <img src="play3.gif" id="music-gif">
+        </div>
+
+        <div class="duration">
+          <span id="currentTime">0:00</span>
+          <input type="range" min="0" max="100" value="0" id="slider" onchange="change_duration()">
+          <span id="duration">0:00</span>
+        <!-- </div>
+        <button id="auto" onclick="autoplay_switch()">Autoplay<i class="fa-solid fa-circle-notch"></i></button>
+
+      </div> -->
+    </div>
+
+  </div>
+
+  <div id="services">
+    <div class="container2">
+      <h1 class="sub-title">Albums</h1>
+      <div class="services-list">
+        <div>
+          <i class="fa-brands fa-playstation"></i>
+          <h2>Hindi</h2>
+          <p>Hindi songs play a significant role in connecting people and evoke strong emotional connections among listeners. </p>
+          <a href="hindi.html">Click here</a>
+        </div>
+
+        <div>
+          <i class="fa-brands fa-playstation"></i>
+          <h2>English</h2>
+          <p>English songs often feature lyrical storytelling, expressing a variety of emotions, experiences, and messages.</p>
+          <a href="english.html">Click here</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="contact">
+    <div class="container">
+      <div class="row">
+        <div class="contact-left">
+          <h1 class="sub-title">Contact-Me</h1>
+          <p><i class="fa-solid fa-paper-plane"></i>kailash0802000@gmail.com</p>
+          <p><i class="fa-solid fa-phone"></i>8207848694</p>
+          <div class="social-icons">
+            <a href="https://www.instagram.com/"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.linkedin.com/in/saurav-kumar-a0b815236/"><i class="fa-brands fa-linkedin"></i></a>
+                    <a href="https://twitter.com/home"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="https://github.com/kailash0802"><i class="fa-brands fa-github"></i></a>
+          </div>
+        </div>
+
+
+        <div class="contact-right">
+          <form>
+            <input type="text" name="Name" placeholder="Your Name" required>
+            <input type="email" name="Email" placeholder="Your Email" required>
+            <textarea name="Message" rows="6" placeholder="Your message"></textarea>
+            <button type="submit" class="btn btn2">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="copyright">
+      <p>copyright © made with Saurav.
+        <i class="fa-solid fa-heart"></i>
+      </p>
+    </div>
+  </div>
+
+  <audio id="currentsong">
+    <source src="song1.mp3" type="audio/mp3">
+  </audio>
+
+  <script>
+    var songs = ["song1.mp3", "song2.mp3", "song3.mp3", "song4.mp3", "song5.mp3", "song6.mp3"];
+    var currentSongIndex = 0;
+
+    var mysong = document.getElementById("currentsong");
+    var icon = document.getElementById("icon");
+    var icon2 = document.getElementById("icon2");
+    var icon3 = document.getElementById("icon3");
+    var currentTime = document.getElementById("currentTime");
+    var duration = document.getElementById("duration");
+    var slider = document.getElementById("slider");
+    var volume = document.getElementById("volume");
+    var volume_icon = document.getElementById("volume_icon");
+    var volume_show = document.getElementById("volume_show");
+    var musicGif = document.getElementById("music-gif");
+    var isPlaying = false; // Track the playing state
+    var seekTo = 0; // Track the seek position
+
+    function playSong() {
+      if (mysong.src !== songs[currentSongIndex]) {
+        mysong.src = songs[currentSongIndex];
+      }
+      mysong.currentTime = seekTo; // Start from the saved seek position
+      mysong.play();
+      icon.src = "pause2.png";
+      showGif();
+      isPlaying = true;
+    }
+
+    function pauseSong() {
+      mysong.pause();
+      icon.src = "m2.png";
+      hideGif();
+      isPlaying = false;
+    }
+
+    icon.onclick = function () {
+      if (isPlaying) {
+        seekTo = mysong.currentTime; // Save the current seek position
+        pauseSong();
+      } else {
+        playSong();
+      }
+    }
+
+    icon2.onclick = function () {
+      currentSongIndex--;
+      if (currentSongIndex < 0) {
+        currentSongIndex = songs.length - 1;
+      }
+      seekTo = 0; // Reset the seek position for new song
+      playSong();
+    }
+
+    icon3.onclick = function () {
+      currentSongIndex++;
+      if (currentSongIndex >= songs.length) {
+        currentSongIndex = 0;
+      }
+      seekTo = 0; // Reset the seek position for new song
+      playSong();
+    }
+
+    function change_duration() {
+      var slider_position = (slider.value / 100) * mysong.duration;
+      mysong.currentTime = slider_position;
+      currentTime.innerHTML = formatTime(mysong.currentTime);
+    }
+
+    function updateSlider() {
+      var position = 0;
+      if (!isNaN(mysong.duration) && mysong.duration > 0) {
+        position = (mysong.currentTime / mysong.duration) * 100;
+        slider.value = position;
+        currentTime.innerHTML = formatTime(mysong.currentTime);
+        duration.innerHTML = formatTime(mysong.duration);
+      }
+    }
+
+    slider.oninput = function () {
+      change_duration();
+    };
+
+    setInterval(function () {
+      updateSlider();
+    }, 1000);
+
+    mysong.onended = function () {
+      clearInterval(duration);
+      pauseSong();
+      slider.value = 0; // Reset the slider position
+      currentTime.innerHTML = "0:00"; // Reset the current time display
+      seekTo = 0; // Reset the saved seek position
+    }
+
+    function formatTime(time) {
+      var minutes = Math.floor(time / 60);
+      var seconds = Math.floor(time % 60);
+      if (seconds < 10) {
+        seconds = "0" + seconds;
+      }
+      return minutes + ":" + seconds;
+    }
+
+    function autoplay_switch() {
+      var auto_button = document.getElementById("auto");
+      if (mysong.autoplay) {
+        mysong.autoplay = false;
+        auto_button.classList.remove("active");
+        auto_button.innerHTML = "Autoplay<i class='fa-solid fa-circle-notch'></i>";
+      } else {
+        mysong.autoplay = true;
+        auto_button.classList.add("active");
+        auto_button.innerHTML = "Autoplay<i class='fa-solid fa-check'></i>";
+      }
+    }
+
+    function mute_sound() {
+      if (mysong.volume === 0) {
+        mysong.volume = 1;
+        volume_icon.classList.remove("fa-volume-mute");
+        volume_icon.classList.add("fa-volume-high");
+        volume.value = 100;
+        volume_show.innerHTML = "100";
+      } else {
+        mysong.volume = 0;
+        volume_icon.classList.remove("fa-volume-high");
+        volume_icon.classList.add("fa-volume-mute");
+        volume.value = 0;
+        volume_show.innerHTML = "0";
+      }
+    }
+
+    function volume_change() {
+      mysong.volume = volume.value / 100;
+      volume_show.innerHTML = volume.value;
+      // if (volume.value == 0) {
+      //   mute_sound();
+      // }
+    }
+
+    // Show GIF image
+    function showGif() {
+      musicGif.style.display = "block";
+    }
+
+    // Hide GIF image
+    function hideGif() {
+      musicGif.style.display = "none";
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      //playSong();
+      hideGif();
+    });
+  </script>
+
+</body>
+
+</html>
