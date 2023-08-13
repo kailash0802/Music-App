@@ -121,6 +121,11 @@ input[type="range"] {
   width: 59%;
 }
 
+.song-name{
+  font-size: 30px;
+  margin: 20px;
+}
+
 #volume_icon {
   color: aqua;
 }
