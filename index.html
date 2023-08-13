@@ -43,6 +43,11 @@
           <span id="currentTime">0:00</span>
           <input type="range" min="0" max="100" value="0" id="slider" onchange="change_duration()">
           <span id="duration">0:00</span>
+
+          <div class="song-name">
+            <p id="songName"></p>
+          </div>
+
         <!-- </div>
         <button id="auto" onclick="autoplay_switch()">Autoplay<i class="fa-solid fa-circle-notch"></i></button>
 
@@ -111,6 +116,7 @@
 
   <script>
     var songs = ["song1.mp3", "song2.mp3", "song3.mp3", "song4.mp3", "song5.mp3", "song6.mp3"];
+    var songNames = ["You Are the shadow to my life", "Har Ghadi Badal rahi h", "Do Anjane Ajnabi", "Maan Meri Jaan", "Shershaah", "Tu Jo Naina"];
     var currentSongIndex = 0;
 
     var mysong = document.getElementById("currentsong");
@@ -135,8 +141,14 @@
       mysong.play();
       icon.src = "pause2.png";
       showGif();
+      updateSongName();
       isPlaying = true;
     }
+
+    function updateSongName() {
+  var songNameElement = document.getElementById("songName");
+  songNameElement.textContent = songNames[currentSongIndex];
+}
 
     function pauseSong() {
       mysong.pause();
